@@ -1,0 +1,380 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.08 0.01 240);
+  --foreground: oklch(0.95 0.01 240);
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.95 0.01 240);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+  --primary: oklch(0.7 0.15 195);
+  --primary-foreground: oklch(0.1 0.01 240);
+  --secondary: oklch(0.2 0.01 240);
+  --secondary-foreground: oklch(0.9 0.01 240);
+  --muted: oklch(0.2 0.01 240);
+  --muted-foreground: oklch(0.6 0.02 240);
+  --accent: oklch(0.7 0.15 195);
+  --accent-foreground: oklch(0.1 0.01 240);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.95 0.01 240);
+  --border: oklch(0.25 0.02 240);
+  --input: oklch(0.2 0.01 240);
+  --ring: oklch(0.7 0.15 195);
+  --chart-1: oklch(0.7 0.15 195);
+  --chart-2: oklch(0.75 0.15 85);
+  --chart-3: oklch(0.7 0.15 160);
+  --chart-4: oklch(0.7 0.15 330);
+  --chart-5: oklch(0.65 0.15 30);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.1 0.01 240);
+  --sidebar-foreground: oklch(0.95 0.01 240);
+  --sidebar-primary: oklch(0.7 0.15 195);
+  --sidebar-primary-foreground: oklch(0.1 0.01 240);
+  --sidebar-accent: oklch(0.2 0.01 240);
+  --sidebar-accent-foreground: oklch(0.95 0.01 240);
+  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-ring: oklch(0.7 0.15 195);
+}
+
+.dark {
+  --background: oklch(0.08 0.01 240);
+  --foreground: oklch(0.95 0.01 240);
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.95 0.01 240);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.95 0.01 240);
+  --primary: oklch(0.7 0.15 195);
+  --primary-foreground: oklch(0.1 0.01 240);
+  --secondary: oklch(0.2 0.01 240);
+  --secondary-foreground: oklch(0.9 0.01 240);
+  --muted: oklch(0.2 0.01 240);
+  --muted-foreground: oklch(0.6 0.02 240);
+  --accent: oklch(0.7 0.15 195);
+  --accent-foreground: oklch(0.1 0.01 240);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.95 0.01 240);
+  --border: oklch(0.25 0.02 240);
+  --input: oklch(0.2 0.01 240);
+  --ring: oklch(0.7 0.15 195);
+  --chart-1: oklch(0.7 0.15 195);
+  --chart-2: oklch(0.75 0.15 85);
+  --chart-3: oklch(0.7 0.15 160);
+  --chart-4: oklch(0.7 0.15 330);
+  --chart-5: oklch(0.65 0.15 30);
+  --sidebar: oklch(0.1 0.01 240);
+  --sidebar-foreground: oklch(0.95 0.01 240);
+  --sidebar-primary: oklch(0.7 0.15 195);
+  --sidebar-primary-foreground: oklch(0.1 0.01 240);
+  --sidebar-accent: oklch(0.2 0.01 240);
+  --sidebar-accent-foreground: oklch(0.95 0.01 240);
+  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-ring: oklch(0.7 0.15 195);
+}
+
+@theme inline {
+  --font-sans: "Inter", "Inter Fallback", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Custom Scrollbar - Hide native, show custom on hover */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  *::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Webkit */
+    width: 0;
+    height: 0;
+  }
+  
+  /* Custom thin scrollbar - discrete gray */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(75, 85, 99, 0.3) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: block;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.3);
+    border-radius: 10px;
+    transition: background-color 0.2s;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(75, 85, 99, 0.5);
+  }
+  
+  /* Full height utilities */
+  .full-height {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+
+  /* Shimmer animation for glassmorphism bubbles */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 3s infinite;
+  }
+
+  /* Hero title neon gradient shimmer */
+  @keyframes hero-title-shimmer {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  .animate-hero-title-shimmer {
+    background-size: 200% auto;
+    animation: hero-title-shimmer 3s linear infinite;
+  }
+
+  /* Brand "AI" glow permanent */
+  .brand-ai-glow {
+    color: #22d3ee;
+    text-shadow: 0 0 20px rgba(34, 211, 238, 0.8), 0 0 40px rgba(34, 211, 238, 0.5);
+    font-weight: 900;
+  }
+
+  /* Squad card: rotating gradient border (pseudo-element, content stays fixed) */
+  @keyframes border-spin {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+  .card-gradient-border {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .card-gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(from 0deg, #ec4899, #3b82f6, #06b6d4, #a78bfa, #ec4899);
+    animation: border-spin 4s linear infinite;
+  }
+
+  /* Scan-line overlay (lignes horizontales 1px, descente continue) */
+  @keyframes scanline-scroll {
+    0% { background-position-y: 0; }
+    100% { background-position-y: 24px; }
+  }
+  .scanline-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 23px,
+      rgba(255, 255, 255, 0.03) 23px,
+      rgba(255, 255, 255, 0.03) 24px
+    );
+    background-size: 100% 24px;
+    animation: scanline-scroll 8s linear infinite;
+  }
+
+  /* Holographic noise (scintillement) sur cartes Squad */
+  @keyframes holographic-noise {
+    0%, 100% { opacity: 0.03; }
+    50% { opacity: 0.08; }
+  }
+  .holographic-noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    animation: holographic-noise 2s ease-in-out infinite;
+  }
+
+  /* Barre de progression néon pulsée */
+  @keyframes progress-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(34, 211, 238, 0.4); opacity: 0.8; }
+    50% { box-shadow: 0 0 25px rgba(34, 211, 238, 0.8); opacity: 1; }
+  }
+  .progress-neon {
+    animation: progress-pulse 2s ease-in-out infinite;
+  }
+
+  /* PRO plan: bordure néon animée */
+  @keyframes neon-border-pulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.9); }
+  }
+  .pricing-pro-neon {
+    animation: neon-border-pulse 3s ease-in-out infinite;
+  }
+
+  /* Fade in up animation for recruitment page */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  /* Fade in scale animation */
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in-scale {
+    animation: fadeInScale 0.4s ease-out forwards;
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Toast progress bar shrink (3s) */
+  @keyframes toast-shrink {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+
+  /* War Room — mission card breathing glow (in_progress) */
+  @keyframes mission-breathing {
+    0%,
+    100% {
+      box-shadow: 0 0 15px rgba(148, 163, 184, 0.15);
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(148, 163, 184, 0.35);
+    }
+  }
+
+  .animate-mission-breathing {
+    animation: mission-breathing 2.5s ease-in-out infinite;
+  }
+
+  /* Kanban — carte tâche "En cours" : bordure pulse */
+  @keyframes kanban-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 12px -2px rgba(6, 182, 212, 0.25);
+    }
+    50% {
+      box-shadow: 0 0 20px -2px rgba(6, 182, 212, 0.5);
+    }
+  }
+  .animate-kanban-pulse {
+    animation: kanban-pulse 2s ease-in-out infinite;
+  }
+}
