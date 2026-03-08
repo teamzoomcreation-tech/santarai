@@ -180,7 +180,7 @@ export async function POST(req: Request) {
         const catalog = MARKET_CATALOG.find((c) => c.name.toUpperCase() === (a.name ?? "").toUpperCase())
         if (!catalog) return []
         const cats = [catalog.category]
-        if (catalog.name === "DAIMYO") cats.push("LEGAL")
+        if (catalog.name === "DAIMYO") cats.push("LEGAL" as any)
         return cats
       })
     )
