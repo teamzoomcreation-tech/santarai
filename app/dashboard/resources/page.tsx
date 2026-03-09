@@ -130,7 +130,7 @@ export default function ResourcesPage() {
         if (insertError) throw insertError
         successCount++
       } catch (err: any) {
-        toast.error(`Échec: ${file.name}`, { description: err?.message ?? t.dashboard.resources.uploadFailed })
+        toast.error(`Échec: ${file.name}`, { description: err?.message ?? (t as any).dashboard.resources.uploadFailed })
       }
     }
 
