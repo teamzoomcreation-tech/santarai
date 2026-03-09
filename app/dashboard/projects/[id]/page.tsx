@@ -287,8 +287,7 @@ function ProjectDetailContent() {
       .from("agents")
       .select("id, name, avatar_color, role")
       .eq("user_id", user.id)
-      .then(({ data }) => setAgentsFromTable(data ?? []))
-      .catch(() => setAgentsFromTable([]))
+      .then(({ data }) => setAgentsFromTable(data ?? []), () => setAgentsFromTable([]))
   }, [user?.id])
 
   const availableAgents = useMemo(() => {
