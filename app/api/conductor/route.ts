@@ -195,7 +195,7 @@ export async function POST(req: Request) {
         description: String(projectData.description ?? projectData.squadName ?? "Généré par SantarAI").trim(),
         type: projectData.type,
         required_roles: projectData.required_roles,
-        missions: sanitizedMissions.map((m) => ({
+        missions: sanitizedMissions.map((m: any) => ({
           title: m.title,
           assigned_agent_id: m.assigned_agent_id,
           agent_name: m.agent_name,
