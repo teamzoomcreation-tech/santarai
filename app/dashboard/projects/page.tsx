@@ -184,7 +184,7 @@ export default function ProjectsPage() {
                     <h3 className="text-lg font-semibold text-foreground line-clamp-1">
                       {project.name}
                     </h3>
-                    <StatusBadge status={project.status} t={t: any} />
+                    <StatusBadge status={project.status} t={t as any} />
                   </div>
                   <p className="mb-4 text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
                     {truncate(project.description, 120) || "—"}
