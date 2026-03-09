@@ -137,14 +137,14 @@ export default function ResourcesPage() {
     input.value = ""
     setUploading(false)
     if (successCount > 0) {
-      toast.success(t.dashboard.resources.filesAddedSuccess.replace('{count}', String(successCount)))
+      toast.success((t as any).dashboard.resources.filesAddedSuccess.replace('{count}', String(successCount)))
       loadResources()
     }
   }
 
   const handleDelete = async (r: Resource) => {
     if (!user?.id) return
-    if (!confirm(t.dashboard.resources.deleteConfirm)) return
+    if (!confirm((t as any).dashboard.resources.deleteConfirm)) return
 
     try {
       const pathMatch = r.file_url.match(/company_docs\/(.+)$/)
@@ -154,10 +154,10 @@ export default function ResourcesPage() {
       }
       const { error } = await supabase.from("resources").delete().eq("id", r.id)
       if (error) throw error
-      toast.success(t.dashboard.resources.fileDeleted)
+      toast.success((t as any).dashboard.resources.fileDeleted)
       loadResources()
     } catch (e: any) {
-      toast.error(t.dashboard.resources.deleteError, { description: e?.message })
+      toast.error((t as any).dashboard.resources.deleteError, { description: e?.message })
     }
   }
 
@@ -166,10 +166,10 @@ export default function ResourcesPage() {
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3 mb-2">
           <Database className="h-8 w-8 text-cyan-400" />
-          {t.dashboard.resources.title}
+          {(t as any).dashboard.resources.title}
         </h1>
         <p className="text-slate-400 text-sm">
-          {t.dashboard.resources.subtitle}
+          {(t as any).dashboard.resources.subtitle}
         </p>
       </div>
 
@@ -187,21 +187,21 @@ export default function ResourcesPage() {
           onChange={handleUpload}
           disabled={uploading}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          aria-label={t.dashboard.resources.uploadLabel}
+          aria-label={(t as any).dashboard.resources.uploadLabel}
         />
         <div className="flex flex-col items-center justify-center gap-3 text-center pointer-events-none">
           {uploading ? (
             <>
               <Loader2 className="h-12 w-12 text-cyan-400 animate-spin" />
-              <p className="text-slate-300 font-medium">{t.dashboard.resources.uploading}</p>
+              <p className="text-slate-300 font-medium">{(t as any).dashboard.resources.uploading}</p>
             </>
           ) : (
             <>
               <Upload className="h-12 w-12 text-cyan-400" />
               <p className="text-slate-300 font-medium">
-                {t.dashboard.resources.dropzone}
+                {(t as any).dashboard.resources.dropzone}
               </p>
-              <p className="text-slate-500 text-xs">{t.dashboard.resources.dropzoneHint}</p>
+              <p className="text-slate-500 text-xs">{(t as any).dashboard.resources.dropzoneHint}</p>
             </>
           )}
         </div>
@@ -210,7 +210,7 @@ export default function ResourcesPage() {
       {/* Grille des fichiers */}
       <div>
         <h2 className="text-lg font-bold text-slate-300 uppercase tracking-wider mb-4">
-          {t.dashboard.resources.files} ({files.length})
+          {(t as any).dashboard.resources.files} ({files.length})
         </h2>
 
         {loading ? (
@@ -220,8 +220,8 @@ export default function ResourcesPage() {
         ) : files.length === 0 ? (
           <div className="rounded-2xl border border-slate-700 border-dashed p-12 text-center text-slate-500">
             <File className="mx-auto h-12 w-12 mb-4 opacity-50" />
-            <p>{t.dashboard.resources.noFiles}</p>
-            <p className="text-sm mt-1">{t.dashboard.resources.noFilesHint}</p>
+            <p>{(t as any).dashboard.resources.noFiles}</p>
+            <p className="text-sm mt-1">{(t as any).dashboard.resources.noFilesHint}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -259,7 +259,7 @@ export default function ResourcesPage() {
                     >
                       <a href={r.file_url} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-1" />
-                        {t.dashboard.resources.open}
+                        {(t as any).dashboard.resources.open}
                       </a>
                     </Button>
                     <Button
@@ -267,7 +267,7 @@ export default function ResourcesPage() {
                       size="icon"
                       className="text-slate-400 hover:text-red-400 hover:bg-red-500/10"
                       onClick={() => handleDelete(r)}
-                      aria-label={t.dashboard.resources.deleteAria}
+                      aria-label={(t as any).dashboard.resources.deleteAria}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
