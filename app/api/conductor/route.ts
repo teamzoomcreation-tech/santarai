@@ -373,7 +373,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const missionsToInsert = sanitizedMut.map((m) => ({
+    const missionsToInsert = sanitizedMut.map((m: any) => ({
       user_id: userId,
       project_id: project.id,
       agent_id: m.assigned_agent_id ?? null,
