@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getTasks, addTask, updateTaskStatus } from "@/lib/supabase/database"
 import { toast } from "sonner"
-import { AgentAvatar2D2D } from "@/components/AgentAvatar2D2D"
+import { AgentAvatar2D } from "@/components/AgentAvatar2D"
 
 interface Task {
   id: string

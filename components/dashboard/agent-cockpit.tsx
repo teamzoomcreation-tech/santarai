@@ -12,7 +12,7 @@ import { toast } from "sonner"
 import type { Agent } from "./my-agents-view"
 import { useAuth } from "@/contexts/auth-context"
 import { getMessages, saveMessage } from "@/lib/supabase/database"
-import { AgentAvatar2D2D } from "@/components/AgentAvatar2D2D"
+import { AgentAvatar2D } from "@/components/AgentAvatar2D"
 import { ChatMessage } from "./chat-message"
 
 interface Message {
