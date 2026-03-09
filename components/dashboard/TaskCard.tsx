@@ -159,6 +159,31 @@ export function TaskCard({
     }
   }
 
+  const handleSaveTitle = async () => {
+    const trimmed = editTitle.trim()
+    if (!trimmed) {
+      toast.error("Le titre ne peut pas être vide")
+      return
+    }
+    try {
+      const res = await fetch("/api/tasks/update", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ taskId: task.id, title: trimmed }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        toast.error(data?.error ?? "Erreur lors de la mise à jour du titre")
+        return
+      }
+      toast.success("Titre enregistré")
+      setIsEditingTitle(false)
+      onReload()
+    } catch {
+      toast.error("Erreur lors de la mise à jour du titre")
+    }
+  }
+
   const outputContent = (task.output_content ?? task.description ?? "").trim()
 
   /** Nom de fichier : [DATE]-[SALARIÉ]-[NOM_MISSION]. */
