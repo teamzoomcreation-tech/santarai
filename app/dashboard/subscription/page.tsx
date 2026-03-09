@@ -91,7 +91,7 @@ export default function SubscriptionPage() {
             const isCurrent = subscriptionTier === plan.tier
             const isLoading = loadingPlan === plan.tier
             const p = plan.tier === 'STARTER' ? pt.starter : plan.tier === 'PRO' ? pt.pro : pt.enterprise
-            const buttonLabel = plan.tier === 'STARTER' ? p.buttonChoose : p.buttonUpgrade
+            const buttonLabel = plan.tier === 'STARTER' ? (p as any).buttonChoose : (p as any).buttonUpgrade
 
             return (
               <div
