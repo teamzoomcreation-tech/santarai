@@ -267,7 +267,7 @@ export async function POST(req: Request) {
     }, 0)
     const missionCost =
       Math.max(0, Number(projectData.totalCost ?? 0) || 0) ||
-      sanitizedMissions.reduce((s, m) => s + Math.max(0, Number(m.estimatedTokens ?? m.cost ?? 0) || 0), 0)
+      sanitizedMissions.reduce((s, m: any) => s + Math.max(0, Number(m.estimatedTokens ?? m.cost ?? 0) || 0), 0)
     const totalToDebit = totalAgentCost + missionCost
 
     console.log("💰 TOTAL À DÉBITER :", totalToDebit, "(agents:", totalAgentCost, "+ missions:", missionCost, ")")
