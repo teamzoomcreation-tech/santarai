@@ -248,7 +248,7 @@ export async function POST(req: Request) {
       const idsToRecruit = selectedAgentIds
         .filter((idLower: any) => validCatalogIds.has(idLower) && !ownedAgentIds.has(idLower))
         .map((idLower: any) => MARKET_CATALOG.find((c) => c.id.toLowerCase() === idLower)?.id)
-        .filter((id): id is string => !!id)
+        .filter((id: any): id is string => !!id)
       nouveauxAgentsARecruterSet = new Set(idsToRecruit)
     } else {
       nouveauxAgentsARecruterSet = new Set<string>()
