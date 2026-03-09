@@ -184,7 +184,7 @@ export async function POST(req: Request) {
         return cats
       })
     )
-    const missingRoles = requiredRoles.filter((r) => !userAgentCategories.has(r))
+    const missingRoles = requiredRoles.filter((r) => !userAgentCategories.has(r as any))
 
     const buildPlanPayload = () => {
       const teamNames = [...new Set(sanitizedMissions.map((m) => m.agent_name).filter(Boolean))] as string[]
