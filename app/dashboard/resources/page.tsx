@@ -76,7 +76,7 @@ export default function ResourcesPage() {
       setFiles((data ?? []) as Resource[])
     } catch (e: any) {
       console.error("Erreur chargement ressources:", e)
-      toast.error(t.dashboard.resources.loadError, { description: e?.message })
+      toast.error((t as any).dashboard.resources.loadError, { description: e?.message })
       setFiles([])
     } finally {
       setLoading(false)
