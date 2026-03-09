@@ -89,7 +89,7 @@ export default function ResourcesPage() {
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user?.id) {
-      toast.error(t.dashboard.resources.notConnected)
+      toast.error((t as any).dashboard.resources.notConnected)
       return
     }
     const input = e.target
