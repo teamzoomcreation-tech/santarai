@@ -57,7 +57,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1 flex flex-col md:ms-64 h-full relative overflow-y-auto overflow-x-hidden">
         <DashboardHeader />
 
-        <div className="flex-1 p-4 pb-24 md:p-6 md:pb-6">
+        <div className="flex-1 p-4 pb-28 md:p-6 md:pb-6">
           {children}
         </div>
       </main>

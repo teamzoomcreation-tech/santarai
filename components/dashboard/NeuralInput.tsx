@@ -65,6 +65,29 @@ export function NeuralInput({ onProjectCreated }: NeuralInputProps) {
           setPendingPlan(null)
           setQuery('')
           onProjectCreated?.()
+
+          // ── AUTO-EXÉCUTION : les agents démarrent immédiatement ──
+          toast.info('⚡ Salariés au travail…', {
+            description: 'Les agents exécutent vos tâches en arrière-plan.',
+            duration: 4000,
+          })
+          fetch(`/api/projects/${json.projectId}/auto-execute`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+          }).then(async (autoRes) => {
+            if (autoRes.ok) {
+              const autoData = await autoRes.json().catch(() => ({}))
+              const count = autoData.executed ?? 0
+              if (count > 0) {
+                toast.success(`✅ ${count} tâche${count > 1 ? 's' : ''} exécutée${count > 1 ? 's' : ''} par vos salariés`, {
+                  duration: 5000,
+                })
+              }
+            }
+          }).catch(() => {
+            // Silencieux — l'auto-exec est un bonus, pas bloquant
+          })
+
           router.push(`/dashboard/projects/${json.projectId}`)
         } else {
           const errorMessage = json.error ?? t.dashboard.neuralInput.deployError

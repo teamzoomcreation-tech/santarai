@@ -270,7 +270,7 @@ export async function POST(req: Request) {
       sanitizedMissions.reduce((s, m: any) => s + Math.max(0, Number(m.estimatedTokens ?? m.cost ?? 0) || 0), 0)
     const totalToDebit = totalAgentCost + missionCost
 
-    console.log("💰 TOTAL À DÉBITER :", totalToDebit, "(agents:", totalAgentCost, "+ missions:", missionCost, ")")
+    // Débit total calculé
 
     if (totalToDebit > 0) {
       const treasury = await getTreasury(supabaseAdmin, userId)
@@ -416,11 +416,10 @@ export async function POST(req: Request) {
     }
     const insertedMissions = missionsData ?? []
 
-    const ORPHAN_PLACEHOLDER = "ZEN"
     const tasksToInsert = insertedMissions.map((mission, idx) => {
       const missionData = missionsToInsert[idx]
       const agentExists = mission.agent_id ? agentsMut.find((a) => a.id === mission.agent_id) : null
-      const finalAgentId = agentExists ? agentExists.id : ORPHAN_PLACEHOLDER
+      const finalAgentId = agentExists ? agentExists.id : null
       return {
         mission_id: mission.id,
         agent_id: finalAgentId,

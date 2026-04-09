@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /login
+Disallow: /signup
+Disallow: /_next/
+
+Sitemap: https://www.santarai.com/sitemap.xml
