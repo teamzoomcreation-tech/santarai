@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Folder, Users, Target, UserPlus,
-  Database, Wallet, Settings, MoreHorizontal, X, LogOut,
+  Database, Wallet, Settings, MoreHorizontal, X, LogOut, CreditCard,
 } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { useLanguage } from '@/components/providers/LanguageProvider'
@@ -22,9 +22,10 @@ const PRIMARY_NAV = [
 
 // Items dans le drawer "Plus"
 const MORE_NAV = [
-  { key: 'wallet' as const,    href: '/dashboard/wallet',       icon: Wallet },
-  { key: 'resources' as const, href: '/dashboard/resources',    icon: Database },
-  { key: 'settings' as const,  href: '/dashboard/settings',     icon: Settings },
+  { key: 'wallet' as const,        href: '/dashboard/wallet',        icon: Wallet },
+  { key: 'subscription' as const,  href: '/dashboard/subscription',  icon: CreditCard },
+  { key: 'resources' as const,     href: '/dashboard/resources',     icon: Database },
+  { key: 'settings' as const,      href: '/dashboard/settings',      icon: Settings },
 ]
 
 export default function MobileNav() {
