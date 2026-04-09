@@ -119,7 +119,7 @@ export function DashboardQGV2() {
   const displayedAgents = agents.slice(0, DISPLAY_AGENTS_LIMIT)
   const remainingCount = Math.max(0, agents.length - DISPLAY_AGENTS_LIMIT)
   return (
-    <div className="min-h-screen w-full p-6 lg:p-8 space-y-6">
+    <div className="min-h-screen w-full p-3 sm:p-4 lg:p-8 space-y-4 lg:space-y-6">
       {/* Header avec Titre et Stats */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -136,7 +136,7 @@ export function DashboardQGV2() {
 
       {/* Scène 3D - Full Width */}
       <div className="w-full">
-        <div className="h-[500px] lg:h-[60vh] relative overflow-hidden rounded-xl border border-cyan-500/20 bg-gradient-to-br from-gray-950/90 via-gray-900/80 to-gray-950/90 backdrop-blur-xl">
+        <div className="h-[220px] sm:h-[360px] lg:h-[60vh] relative overflow-hidden rounded-xl border border-cyan-500/20 bg-gradient-to-br from-gray-950/90 via-gray-900/80 to-gray-950/90 backdrop-blur-xl">
           <div className="relative h-full w-full">
             <LiveOfficeScene agents={sceneAgents} />
           </div>

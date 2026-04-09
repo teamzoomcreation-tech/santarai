@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { ArrowLeft, Plus, Calendar, Users, Trash2 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ArrowLeft, Plus, Calendar, Users, Trash2, CheckCircle2, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getTasks, addTask, updateTaskStatus } from "@/lib/supabase/database"
@@ -37,21 +37,22 @@ interface Project {
   }>
 }
 
-const colorConfig: Record<string, string> = {
-  cyan: "from-cyan-500 to-blue-600",
-  amber: "from-amber-500 to-orange-600",
-  emerald: "from-emerald-500 to-teal-600",
-  pink: "from-pink-500 to-rose-600",
-  violet: "from-violet-500 to-purple-600",
-}
-
 interface ProjectKanbanProps {
   project: Project
   onBack: () => void
   onOpenAgentCockpit?: (agentId: string, taskTitle: string) => void
 }
 
+const tagColorConfig: Record<string, string> = {
+  cyan: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
+  amber: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+  violet: "bg-violet-500/10 text-violet-400 border-violet-500/30",
+  pink: "bg-pink-500/10 text-pink-400 border-pink-500/30",
+}
+
 export function ProjectKanban({ project, onBack, onOpenAgentCockpit }: ProjectKanbanProps) {
+  // Only two visible columns: todo and done (inprogress tasks shown in todo)
   const [tasks, setTasks] = useState<Record<string, Task[]>>({
     todo: [],
     inprogress: [],
@@ -59,69 +60,53 @@ export function ProjectKanban({ project, onBack, onOpenAgentCockpit }: ProjectKa
   })
   const [loading, setLoading] = useState(true)
 
-  // Load tasks from Supabase
   useEffect(() => {
     const loadTasks = async () => {
       try {
         setLoading(true)
         const data = await getTasks(project.id)
-        setTasks(data)
-      } catch (error: any) {
-        toast.error("Erreur lors du chargement des tâches", {
-          description: error.message,
+        // Merge inprogress tasks into todo for display
+        setTasks({
+          todo: [...(data.todo ?? []), ...(data.inprogress ?? [])],
+          inprogress: [],
+          done: data.done ?? [],
         })
-        // Fallback to empty if error
+      } catch (error: any) {
+        toast.error("Erreur lors du chargement des tâches", { description: error.message })
         setTasks({ todo: [], inprogress: [], done: [] })
       } finally {
         setLoading(false)
       }
     }
-
     loadTasks()
   }, [project.id])
 
-  const columns = [
-    { id: "todo", title: "À faire", color: "gray" },
-    { id: "inprogress", title: "En cours", color: "amber" },
-    { id: "done", title: "Terminé", color: "emerald" },
-  ]
-
-  const handleTaskClick = async (taskId: string, currentColumn: string) => {
-    const task = tasks[currentColumn].find((t) => t.id === taskId)
+  const handleMarkDone = async (taskId: string) => {
+    const task = tasks.todo.find((t) => t.id === taskId)
     if (!task) return
 
-    // If task has assigned agents, open the first agent's cockpit
-    if (task.assignedAgents.length > 0 && onOpenAgentCockpit) {
-      const agentId = task.assignedAgents[0].id
-      onOpenAgentCockpit(agentId, task.title)
-      return
-    }
-
-    // Otherwise, move task to next column (if not done)
-    if (currentColumn === "done") return // Can't move from done
-
-    const nextStatus = currentColumn === "todo" ? "inprogress" : "done"
-
     try {
-      // Update in database
-      await updateTaskStatus(taskId, nextStatus)
-
-      // Update local state
-      const newTasks = { ...tasks }
-      newTasks[currentColumn] = newTasks[currentColumn].filter((t) => t.id !== taskId)
-      newTasks[nextStatus] = [...newTasks[nextStatus], task]
-      setTasks(newTasks)
+      await updateTaskStatus(taskId, "done")
+      setTasks((prev) => ({
+        ...prev,
+        todo: prev.todo.filter((t) => t.id !== taskId),
+        done: [task, ...prev.done],
+      }))
+      toast.success("Tâche marquée comme terminée")
     } catch (error: any) {
-      toast.error("Erreur lors de la mise à jour", {
-        description: error.message,
-      })
+      toast.error("Erreur lors de la mise à jour", { description: error.message })
+    }
+  }
+
+  const handleOpenCockpit = (task: Task) => {
+    if (task.assignedAgents.length > 0 && onOpenAgentCockpit) {
+      onOpenAgentCockpit(task.assignedAgents[0].id, task.title)
     }
   }
 
   const handleAddTask = async () => {
     const title = prompt("Titre de la tâche :")
     if (!title) return
-
     const description = prompt("Description :") || ""
     const dueDate = prompt("Date d'échéance (ex: 15 Mars 2024) :") || "Non définie"
     const tag = prompt("Tag (Marketing, Dev, Design, etc.) :") || "Général"
@@ -136,246 +121,274 @@ export function ProjectKanban({ project, onBack, onOpenAgentCockpit }: ProjectKa
         tagColor,
         assignedAgentIds: [],
       })
-
-      // Add to local state
-      const newTasks = { ...tasks }
-      newTasks.todo = [
-        ...newTasks.todo,
-        {
-          id: newTask.id,
-          title: newTask.title,
-          description: newTask.description,
-          dueDate: newTask.due_date,
-          tag: newTask.tag,
-          tagColor: newTask.tag_color,
-          assignedAgents: [],
-        },
-      ]
-      setTasks(newTasks)
+      setTasks((prev) => ({
+        ...prev,
+        todo: [
+          ...prev.todo,
+          {
+            id: newTask.id,
+            title: newTask.title,
+            description: newTask.description,
+            dueDate: newTask.due_date,
+            tag: newTask.tag,
+            tagColor: newTask.tag_color,
+            assignedAgents: [],
+          },
+        ],
+      }))
       toast.success("Tâche créée avec succès !")
     } catch (error: any) {
-      toast.error("Erreur lors de la création", {
-        description: error.message,
-      })
+      toast.error("Erreur lors de la création", { description: error.message })
     }
   }
 
   const handleDeleteTask = async (taskId: string, columnId: string) => {
-    if (!confirm("Voulez-vous vraiment supprimer cette tâche ?")) return;
-
-    // Mise à jour optimiste (suppression visuelle immédiate)
+    if (!confirm("Voulez-vous vraiment supprimer cette tâche ?")) return
     setTasks((prev) => ({
       ...prev,
       [columnId]: (prev[columnId] || []).filter((t) => t.id !== taskId),
-    }));
-
+    }))
     try {
-      const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Erreur serveur");
-      toast.success("Tâche supprimée");
-    } catch (e) {
-      console.error(e);
-      toast.error("Erreur lors de la suppression");
+      const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" })
+      if (!res.ok) throw new Error("Erreur serveur")
+      toast.success("Tâche supprimée")
+    } catch {
+      toast.error("Erreur lors de la suppression")
     }
-  };
-
-  const tagColorConfig: Record<string, string> = {
-    cyan: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
-    amber: "bg-amber-500/10 text-amber-400 border-amber-500/30",
-    emerald: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-    violet: "bg-violet-500/10 text-violet-400 border-violet-500/30",
-    pink: "bg-pink-500/10 text-pink-400 border-pink-500/30",
   }
+
+  const columns = [
+    {
+      id: "todo" as const,
+      title: "À faire",
+      dotColor: "bg-slate-400",
+      headerColor: "text-slate-300",
+    },
+    {
+      id: "done" as const,
+      title: "Terminé",
+      dotColor: "bg-emerald-400",
+      headerColor: "text-emerald-300",
+    },
+  ]
 
   return (
     <div className="flex h-full flex-1 flex-col overflow-hidden">
-      {/* Header with Project Details */}
-      <div className="border-b border-cyan-900/20 bg-gray-950/50 px-6 py-4 backdrop-blur-sm shrink-0">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={onBack}
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <div className="h-6 w-px bg-cyan-900/20" />
-            <div>
-              <h2 className="text-xl font-semibold text-foreground">{project.name}</h2>
-              <p className="text-sm text-muted-foreground">Vue Kanban - Gestion des tâches</p>
-            </div>
+      {/* Header */}
+      <div className="border-b border-white/5 bg-gray-950/50 px-4 py-3 backdrop-blur-sm shrink-0">
+        <div className="flex items-center gap-3 mb-3">
+          <Button
+            onClick={onBack}
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground -ml-2"
+          >
+            <ArrowLeft className="mr-1.5 h-4 w-4" />
+            <span className="hidden sm:inline">Retour</span>
+          </Button>
+          <div className="h-4 w-px bg-white/10 hidden sm:block" />
+          <div className="min-w-0">
+            <h2 className="text-base font-semibold text-foreground truncate">{project.name}</h2>
+            <p className="text-xs text-muted-foreground hidden sm:block">Gestion des tâches</p>
           </div>
         </div>
 
-        {/* Project Progress and Agents */}
-        <div className="flex items-center gap-6">
-          {/* Progress Bar */}
+        {/* Progress + Agents */}
+        <div className="flex items-center gap-4">
           <div className="flex-1">
-            <div className="mb-2 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Progression globale</span>
+            <div className="mb-1.5 flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Progression</span>
               <span className="font-semibold text-cyan-400">{project.progress}%</span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-800">
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-800">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all"
+                className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-700"
                 style={{ width: `${project.progress}%` }}
               />
             </div>
           </div>
-
-          {/* Assigned Agents */}
-          <div className="flex items-center gap-3">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <div className="flex -space-x-2">
-              {project.assignedAgents.map((agent, index) => (
+          <div className="flex items-center gap-2 shrink-0">
+            <Users className="h-3.5 w-3.5 text-muted-foreground" />
+            <div className="flex -space-x-1.5">
+              {project.assignedAgents.slice(0, 4).map((agent, index) => (
                 <div
                   key={agent.id}
                   className="relative"
                   style={{ zIndex: project.assignedAgents.length - index }}
                 >
-                  <AgentAvatar2D name={agent.name} size="md" />
+                  <AgentAvatar2D name={agent.name} size="sm" />
                 </div>
               ))}
             </div>
-            <span className="text-sm text-muted-foreground">
-              {project.assignedAgents.length} agent{project.assignedAgents.length > 1 ? "s" : ""}
-            </span>
+            {project.assignedAgents.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {project.assignedAgents.length}
+              </span>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Kanban Board */}
-      <div className="flex flex-1 overflow-x-auto custom-scrollbar min-h-0">
-        {columns.map((column) => (
-          <div
-            key={column.id}
-            className="flex-shrink-0 w-[33.333%] border-r border-cyan-900/10 bg-gray-950/20 flex flex-col"
-          >
-            {/* Column Header */}
-            <div className="px-4 py-3 border-b border-cyan-900/10 shrink-0">
-              <div className="flex items-center gap-2">
-                <div
-                  className={cn(
-                    "h-2 w-2 rounded-full",
-                    column.color === "gray" && "bg-gray-400",
-                    column.color === "amber" && "bg-amber-400",
-                    column.color === "emerald" && "bg-emerald-400"
-                  )}
-                />
-                <h3 className="font-semibold text-foreground">{column.title}</h3>
-                <span className="ml-auto text-xs text-muted-foreground bg-gray-900/50 px-2 py-0.5 rounded-full">
-                  {tasks[column.id]?.length || 0}
-                </span>
-              </div>
-            </div>
-
-            {/* Add Task Button (only in Todo column) */}
-            {column.id === "todo" && (
-              <div className="px-4 py-2 border-b border-cyan-900/10 shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleAddTask}
-                  className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-gray-900/30"
-                >
-                  <Plus className="mr-2 h-3 w-3" />
-                  Assigner une Tâche
-                </Button>
-              </div>
-            )}
-
-            {/* Tasks List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 min-h-0">
-              {loading && column.id === "todo" ? (
-                <div className="text-center py-8">
-                  <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-cyan-500/20 border-t-cyan-400" />
-                  <p className="mt-2 text-xs text-muted-foreground">Rédaction du rapport par le salarié...</p>
+      {/* Kanban Board — vertical on mobile, horizontal on lg */}
+      <div className="flex-1 overflow-y-auto lg:overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:h-full gap-0 lg:gap-0">
+          {columns.map((column, colIndex) => (
+            <div
+              key={column.id}
+              className={cn(
+                "flex flex-col lg:flex-1",
+                colIndex < columns.length - 1 && "border-b lg:border-b-0 lg:border-r border-white/5"
+              )}
+            >
+              {/* Column Header */}
+              <div className="px-4 py-3 border-b border-white/5 shrink-0 sticky top-0 bg-gray-950/90 backdrop-blur-sm z-10">
+                <div className="flex items-center gap-2">
+                  <span className={cn("h-2 w-2 rounded-full shrink-0", column.dotColor)} />
+                  <h3 className={cn("font-semibold text-sm", column.headerColor)}>{column.title}</h3>
+                  <span className="ml-auto text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full tabular-nums">
+                    {tasks[column.id]?.length ?? 0}
+                  </span>
                 </div>
-              ) : tasks[column.id]?.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-xs text-muted-foreground">Aucune tâche</p>
+              </div>
+
+              {/* Add Task (todo only) */}
+              {column.id === "todo" && (
+                <div className="px-3 py-2 border-b border-white/5 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleAddTask}
+                    className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-white/5 text-xs h-8"
+                  >
+                    <Plus className="mr-1.5 h-3 w-3" />
+                    Ajouter une tâche
+                  </Button>
                 </div>
-              ) : (
-                tasks[column.id]?.map((task) => (
-                <div
-                  key={task.id}
-                  onClick={() => handleTaskClick(task.id, column.id)}
-                  className={cn(
-                    "group relative rounded-lg border-4 border-blue-500 bg-gray-900/30 p-4 hover:border-cyan-500/30 hover:bg-gray-900/40 transition-all animate-pulse",
-                    (task.assignedAgents.length > 0 && onOpenAgentCockpit) || (column.id !== "done") ? "cursor-pointer" : ""
-                  )}
-                >
-                  {column.id === "done" && (
-                    <motion.div
-                      initial={{ scale: 0.85, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                      className="absolute top-2 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
-                    >
-                      <span className="inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase border-2 border-amber-400/80 bg-amber-500/15 text-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.25)]">
-                        LIVRABLE VALIDÉ
-                      </span>
-                    </motion.div>
-                  )}
-                  {/* Tag */}
-                  <div className="mb-2">
-                    <span
-                      className={cn(
-                        "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                        tagColorConfig[task.tagColor] || tagColorConfig.cyan
-                      )}
-                    >
-                      {task.tag}
-                    </span>
-                  </div>
+              )}
 
-                  {/* BOUTON IN-FLOW DEBUG - à côté du titre */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm("SUPPR ?")) handleDeleteTask(task.id, column.id);
-                      }}
-                      className="bg-red-600 text-white px-2 py-1 text-xs rounded mr-2 z-50 relative"
-                    >
-                      SUPPRIMER
-                    </button>
-                    <h4 className="font-semibold text-foreground">{task.title}</h4>
+              {/* Tasks List */}
+              <div className="flex-1 overflow-y-auto p-3 space-y-2.5 lg:min-h-0">
+                {loading && column.id === "todo" ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-2">
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-cyan-500/20 border-t-cyan-400" />
+                    <p className="text-xs text-muted-foreground">Chargement…</p>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-3">{task.description}</p>
-                  
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      <span>{task.dueDate}</span>
-                    </div>
-                  </div>
-
-                  {/* Assigned Agent Avatar */}
-                  <div className="flex items-center gap-2">
-                    {task.assignedAgents.length > 0 && (
-                      <div className="flex -space-x-2">
-                        {task.assignedAgents.map((agent, index) => (
-                          <div
-                            key={agent.id}
-                            className="relative"
-                            style={{ zIndex: task.assignedAgents.length - index }}
-                          >
-                            <AgentAvatar2D name={agent.name} size="sm" />
-                          </div>
-                        ))}
-                      </div>
+                ) : tasks[column.id]?.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+                    {column.id === "done" ? (
+                      <>
+                        <CheckCircle2 className="h-8 w-8 text-emerald-500/20" />
+                        <p className="text-xs text-muted-foreground">Aucun livrable encore</p>
+                      </>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">Aucune tâche en attente</p>
                     )}
                   </div>
-                </div>
-                ))
-              )}
+                ) : (
+                  <AnimatePresence initial={false}>
+                    {tasks[column.id]?.map((task) => (
+                      <motion.div
+                        key={task.id}
+                        layout
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.18 }}
+                        className="group relative rounded-xl border border-white/5 bg-gray-900/40 p-3.5 hover:border-white/10 hover:bg-gray-900/60 transition-colors"
+                      >
+                        {/* Done badge */}
+                        {column.id === "done" && (
+                          <div className="flex items-center gap-1.5 mb-2.5">
+                            <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase border border-emerald-400/30 bg-emerald-500/10 text-emerald-300">
+                              <CheckCircle2 className="h-2.5 w-2.5" />
+                              LIVRABLE VALIDÉ
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Tag + Delete */}
+                        <div className="flex items-center justify-between mb-2 gap-2">
+                          <span
+                            className={cn(
+                              "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium shrink-0",
+                              tagColorConfig[task.tagColor] || tagColorConfig.cyan
+                            )}
+                          >
+                            {task.tag}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteTask(task.id, column.id)
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-all shrink-0"
+                            aria-label="Supprimer la tâche"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+
+                        {/* Title */}
+                        <h4 className="font-semibold text-sm text-foreground leading-snug mb-1">
+                          {task.title}
+                        </h4>
+
+                        {/* Description */}
+                        {task.description && (
+                          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                            {task.description}
+                          </p>
+                        )}
+
+                        {/* Footer */}
+                        <div className="flex items-center justify-between gap-2 mt-2">
+                          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                            <Calendar className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{task.dueDate}</span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5">
+                            {/* Agent avatars */}
+                            {task.assignedAgents.length > 0 && (
+                              <div className="flex -space-x-1.5">
+                                {task.assignedAgents.slice(0, 3).map((agent, index) => (
+                                  <div
+                                    key={agent.id}
+                                    className="relative cursor-pointer"
+                                    style={{ zIndex: task.assignedAgents.length - index }}
+                                    onClick={() => handleOpenCockpit(task)}
+                                  >
+                                    <AgentAvatar2D name={agent.name} size="sm" />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Mark done button (todo only) */}
+                            {column.id === "todo" && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleMarkDone(task.id)
+                                }}
+                                className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors"
+                              >
+                                <Zap className="h-2.5 w-2.5" />
+                                Terminer
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )
