@@ -43,6 +43,9 @@ export const translations = {
       resources: 'Ressources',
       missions: 'Missions',
       recruit: 'Recruter',
+      wallet: 'Trésorerie',
+      settings: 'Réglages',
+      more: 'Plus',
     },
     pricing: {
       header: { currentPlan: 'Plan Actuel', title: 'Upgrade Neural Capacity', subtitle: 'Choisissez le plan qui correspond à vos besoins' },
@@ -438,6 +441,9 @@ export const translations = {
       resources: 'Resources',
       missions: 'Missions',
       recruit: 'Recruit',
+      wallet: 'Treasury',
+      settings: 'Settings',
+      more: 'More',
     },
     pricing: {
       header: { currentPlan: 'Current Plan', title: 'Upgrade Neural Capacity', subtitle: 'Choose the plan that fits your needs' },
@@ -833,6 +839,9 @@ export const translations = {
       resources: 'Recursos',
       missions: 'Misiones',
       recruit: 'Reclutar',
+      wallet: 'Tesorería',
+      settings: 'Ajustes',
+      more: 'Más',
     },
     pricing: {
       header: { currentPlan: 'Plan Actual', title: 'Upgrade Neural Capacity', subtitle: 'Elija el plan que se ajuste a sus necesidades' },
@@ -1220,6 +1229,9 @@ export const translations = {
       resources: 'Ressourcen',
       missions: 'Missionen',
       recruit: 'Rekrutieren',
+      wallet: 'Schatzkammer',
+      settings: 'Einstellungen',
+      more: 'Mehr',
     },
     pricing: {
       header: { currentPlan: 'Aktueller Plan', title: 'Upgrade Neural Capacity', subtitle: 'Wählen Sie den Plan, der zu Ihren Bedürfnissen passt' },
@@ -1615,6 +1627,9 @@ export const translations = {
       resources: 'الموارد',
       missions: 'المهام',
       recruit: 'التوظيف',
+      wallet: 'الخزينة',
+      settings: 'الإعدادات',
+      more: 'المزيد',
     },
     pricing: {
       header: { currentPlan: 'الخطة الحالية', title: 'ترقية القدرة العصبية', subtitle: 'اختر الخطة التي تناسب احتياجاتك' },

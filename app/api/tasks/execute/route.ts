@@ -91,9 +91,7 @@ RÈGLES ABSOLUES :
       completion.choices[0]?.message?.content?.trim() ??
       "(Aucun contenu généré)"
 
-    const outputLen = outputContent.length
-    const tail = outputContent.slice(-300)
-    console.log("[execute] output_content length:", outputLen, "chars; tail (last 300):", tail)
+    // Contenu généré avec succès
 
     const isCode =
       /^```[\s\S]*?```/m.test(outputContent) ||
@@ -126,7 +124,7 @@ RÈGLES ABSOLUES :
       )
     }
 
-    console.log("[execute] task updated successfully, taskId:", taskId)
+    // Tâche mise à jour avec succès
 
     return NextResponse.json({
       success: true,

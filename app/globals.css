@@ -116,6 +116,33 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ═══ Accessibilité : Respect prefers-reduced-motion ═══ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .scanline-overlay,
+  .animate-shimmer,
+  .animate-hero-title-shimmer,
+  .holographic-noise::after,
+  .card-gradient-border::before,
+  .progress-neon,
+  .pricing-pro-neon,
+  .animate-mission-breathing,
+  .animate-kanban-pulse,
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-fade-in-scale {
+    animation: none !important;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
