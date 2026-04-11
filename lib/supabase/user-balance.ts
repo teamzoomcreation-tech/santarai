@@ -81,6 +81,7 @@ export async function getPlan(supabase: SupabaseClient, userId: string): Promise
 /**
  * Met à jour le plan d'abonnement ET crédite les tokens correspondants.
  * Utilisé UNIQUEMENT par le webhook Stripe (côté serveur, service role).
+ * Gère gracieusement l'absence de la colonne plan (migration non encore appliquée).
  */
 export async function setPlan(
   supabase: SupabaseClient,
@@ -92,6 +93,7 @@ export async function setPlan(
     const current = await getTreasury(supabase, userId)
     const newBalance = current + tokensToAdd
 
+    // Tentative avec colonne plan (migration appliquée)
     const { error } = await supabase
       .from("user_balance")
       .upsert(
@@ -105,6 +107,21 @@ export async function setPlan(
       )
 
     if (error) {
+      // Fallback : si la colonne plan n'existe pas encore (migration non appliquée)
+      // on met quand même les tokens à jour
+      if (error.message?.includes('plan') || error.code === '42703') {
+        console.warn("[setPlan] Colonne plan manquante — mise à jour treasury uniquement. Appliquer la migration SQL.")
+        const { error: fallbackError } = await supabase
+          .from("user_balance")
+          .upsert(
+            { user_id: userId, treasury: newBalance, updated_at: new Date().toISOString() },
+            { onConflict: "user_id" }
+          )
+        if (fallbackError) {
+          return { ok: false, error: fallbackError.message }
+        }
+        return { ok: true } // tokens crédités, plan non persisté
+      }
       console.error("[setPlan] Erreur upsert user_balance:", error.message)
       return { ok: false, error: error.message }
     }
