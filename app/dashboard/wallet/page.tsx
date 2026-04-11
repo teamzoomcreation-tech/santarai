@@ -122,7 +122,7 @@ export default function WalletPage() {
           <div className="text-2xl md:text-3xl font-black text-emerald-400 tabular-nums">
             {economieReference.toLocaleString('fr-FR')} <span className="text-lg font-bold text-slate-500">€ /mois</span>
           </div>
-          <p className="text-[10px] text-slate-500 mt-1">Réf. comparatif coût humain vs SantarAI</p>
+          <p className="text-xs text-slate-500 mt-1">Réf. comparatif coût humain vs SantarAI</p>
         </div>
       </div>
 
@@ -132,7 +132,7 @@ export default function WalletPage() {
         <button
           type="button"
           onClick={handleExportCSV}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm transition-colors"
+          className="flex items-center gap-2 px-4 py-3 min-h-[44px] bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold text-sm transition-colors"
         >
           <Download size={18} />
           {t.dashboard.wallet.downloadLedger}
@@ -144,16 +144,16 @@ export default function WalletPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-white/10 bg-white/5">
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+                <th className="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
                   {t.dashboard.wallet.date}
                 </th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                <th className="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest">
                   {t.dashboard.wallet.labelLibelle}
                 </th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+                <th className="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
                   {t.dashboard.wallet.reference}
                 </th>
-                <th className="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right whitespace-nowrap">
+                <th className="px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-widest text-right whitespace-nowrap">
                   {t.dashboard.wallet.amount}
                 </th>
               </tr>

@@ -3,7 +3,7 @@ import { MARKET_CATALOG, type MarketAgent, type MarketCategory } from '@/lib/cat
 import type { Project } from '@/types'
 import { supabase } from '@/lib/supabase/client'
 import { getAgents } from '@/lib/supabase/database'
-import { getTreasury, debitTreasury } from '@/lib/supabase/user-balance'
+import { getTreasury, debitTreasury, getPlan } from '@/lib/supabase/user-balance'
 
 export type { MarketAgent, MarketCategory }
 export { MARKET_CATALOG } from '@/lib/catalog'
@@ -68,6 +68,7 @@ export interface Mission {
 }
 
 const PLANS = {
+  FREE: { limit: 25_000 },
   STARTER: { limit: 500_000 },
   PRO: { limit: 2_500_000 },
   ENTERPRISE: { limit: 15_000_000 },
@@ -128,7 +129,7 @@ const INITIAL_SETTINGS: CompanySettings = {
   notifications: INITIAL_NOTIFICATIONS,
 }
 
-export type SubscriptionTier = 'STARTER' | 'PRO' | 'ENTERPRISE'
+export type SubscriptionTier = 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE'
 
 interface DashboardState {
   savedTime: number
@@ -208,7 +209,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
       projects: [],
       activeProject: null,
       settings: INITIAL_SETTINGS,
-      subscriptionTier: 'STARTER',
+      subscriptionTier: 'FREE',
       activeChatAgentId: null,
       missionsUnreadCount: 0,
       boardroomOpen: false,
@@ -271,12 +272,15 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         }
         try {
           set({ treasuryLoading: true })
-          // Lecture UNIQUEMENT depuis user_balance.treasury (pas profiles)
-          const treasury = await getTreasury(supabase, userId)
-          set({ tokens: treasury, treasuryLoading: false })
+          // Charger trésorerie ET plan en parallèle depuis user_balance
+          const [treasury, plan] = await Promise.all([
+            getTreasury(supabase, userId),
+            getPlan(supabase, userId),
+          ])
+          set({ tokens: treasury, subscriptionTier: plan, treasuryLoading: false })
         } catch (err) {
           console.error('[fetchTreasury] Erreur chargement user_balance:', err)
-          set({ tokens: FREEMIUM_INITIAL, treasuryLoading: false })
+          set({ tokens: FREEMIUM_INITIAL, subscriptionTier: 'FREE', treasuryLoading: false })
         }
       },
 
@@ -322,7 +326,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
           projects: [],
           activeProject: null,
           settings: INITIAL_SETTINGS,
-          subscriptionTier: 'STARTER',
+          subscriptionTier: 'FREE',
         })
       },
 
@@ -721,6 +725,6 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         projects: [],
         activeProject: null,
         settings: INITIAL_SETTINGS,
-        subscriptionTier: 'STARTER',
+        subscriptionTier: 'FREE',
       }),
 }))

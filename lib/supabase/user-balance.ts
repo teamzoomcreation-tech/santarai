@@ -9,11 +9,21 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js"
 
+export type PlanTier = 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE'
+
 const DEFAULT_TREASURY = 25_000 // Freemium : solde initial nouveaux utilisateurs
+const DEFAULT_PLAN: PlanTier = 'FREE'
+
+// Tokens crédités à l'achat de chaque plan
+export const PLAN_TOKENS: Record<PlanTier, number> = {
+  FREE: 25_000,
+  STARTER: 500_000,
+  PRO: 2_500_000,
+  ENTERPRISE: 15_000_000,
+}
 
 export async function getTreasury(supabase: SupabaseClient, userId: string): Promise<number> {
   try {
-    // .maybeSingle() : 0 rows → { data: null, error: null } (pas d'erreur PGRST116)
     const { data, error } = await supabase
       .from("user_balance")
       .select("treasury")
@@ -24,11 +34,11 @@ export async function getTreasury(supabase: SupabaseClient, userId: string): Pro
       return Number(data.treasury ?? DEFAULT_TREASURY)
     }
 
-    // Pas de ligne (nouvel utilisateur) ou erreur → créer la ligne et retourner le solde Freemium
+    // Nouvel utilisateur — créer la ligne avec le solde FREE
     const { error: upsertError } = await supabase
       .from("user_balance")
       .upsert(
-        { user_id: userId, treasury: DEFAULT_TREASURY, updated_at: new Date().toISOString() },
+        { user_id: userId, treasury: DEFAULT_TREASURY, plan: DEFAULT_PLAN, updated_at: new Date().toISOString() },
         { onConflict: "user_id" }
       )
 
@@ -47,9 +57,66 @@ export async function getTreasury(supabase: SupabaseClient, userId: string): Pro
   }
 }
 
+/**
+ * Lit le plan d'abonnement actuel depuis user_balance.
+ * Retourne 'FREE' si aucune ligne n'existe.
+ */
+export async function getPlan(supabase: SupabaseClient, userId: string): Promise<PlanTier> {
+  try {
+    const { data, error } = await supabase
+      .from("user_balance")
+      .select("plan")
+      .eq("user_id", userId)
+      .maybeSingle()
+
+    if (!error && data && data.plan) {
+      return data.plan as PlanTier
+    }
+    return DEFAULT_PLAN
+  } catch {
+    return DEFAULT_PLAN
+  }
+}
+
+/**
+ * Met à jour le plan d'abonnement ET crédite les tokens correspondants.
+ * Utilisé UNIQUEMENT par le webhook Stripe (côté serveur, service role).
+ */
+export async function setPlan(
+  supabase: SupabaseClient,
+  userId: string,
+  plan: PlanTier,
+  tokensToAdd: number
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const current = await getTreasury(supabase, userId)
+    const newBalance = current + tokensToAdd
+
+    const { error } = await supabase
+      .from("user_balance")
+      .upsert(
+        {
+          user_id: userId,
+          treasury: newBalance,
+          plan,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      )
+
+    if (error) {
+      console.error("[setPlan] Erreur upsert user_balance:", error.message)
+      return { ok: false, error: error.message }
+    }
+    return { ok: true }
+  } catch (err: any) {
+    console.error("[setPlan] Exception:", err?.message ?? err)
+    return { ok: false, error: err?.message ?? "Erreur inconnue" }
+  }
+}
+
 export async function ensureAndGetTreasury(supabase: SupabaseClient, userId: string): Promise<number> {
-  const treasury = await getTreasury(supabase, userId)
-  return treasury
+  return getTreasury(supabase, userId)
 }
 
 export async function debitTreasury(

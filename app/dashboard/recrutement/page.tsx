@@ -134,14 +134,14 @@ function RecrutementContent() {
             </p>
           </div>
           <div className="bg-slate-900/90 backdrop-blur-xl border border-cyan-500/40 rounded-xl px-6 py-4 shadow-[0_0_25px_rgba(6,182,212,0.2)] font-mono">
-            <p className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-1">
+            <p className="text-xs font-bold text-cyan-400 uppercase tracking-widest mb-1">
               {t.dashboard.recruitment.balance}
             </p>
             <p className="text-3xl md:text-4xl font-bold text-cyan-400 tabular-nums flex items-center gap-2">
               <Cpu size={28} className="text-cyan-500" />
               {tokens.toLocaleString()} TK
             </p>
-            <p className="text-[10px] text-slate-500 mt-1">{t.dashboard.recruitment.computeTokens}</p>
+            <p className="text-xs text-slate-500 mt-1">{t.dashboard.recruitment.computeTokens}</p>
           </div>
         </div>
 
@@ -174,7 +174,7 @@ function RecrutementContent() {
                   key={catId}
                   type="button"
                   onClick={() => setFilter(catId)}
-className={`px-3 py-1 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold uppercase tracking-wider border transition-all ${
+className={`px-4 py-2.5 min-h-[44px] rounded-lg text-sm md:text-base font-bold uppercase tracking-wider border transition-all ${
                       filter === catId
                         ? 'bg-white text-black border-white shadow-[0_0_12px_rgba(255,255,255,0.3)]'
                         : 'bg-slate-900/80 text-slate-400 border-slate-600 hover:bg-slate-800 hover:text-white'
@@ -203,7 +203,7 @@ className={`px-3 py-1 md:px-4 md:py-2 rounded-lg text-sm md:text-base font-bold 
                 >
                   {/* Badge catégorie (Pill) */}
                   <span
-                    className={`inline-flex self-start mb-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${style.badge}`}
+                    className={`inline-flex self-start mb-3 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${style.badge}`}
                   >
                     {item.category}
                   </span>

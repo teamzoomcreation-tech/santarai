@@ -10,6 +10,8 @@ import { DashboardQGV2 } from "@/components/dashboard/dashboard-qg-v2"
 import { DashboardLoadingFallback } from "@/components/dashboard/DashboardLoadingFallback"
 import { useLanguage } from "@/components/providers/LanguageProvider"
 import { translations } from "@/lib/i18n"
+import { WelcomePlanModal } from "@/components/modals/WelcomePlanModal"
+import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard"
 
 function DashboardContent() {
   const { user, loading } = useAuth()
@@ -17,9 +19,8 @@ function DashboardContent() {
   const t = translations[currentLang] ?? translations.fr
   const router = useRouter()
   const searchParams = useSearchParams()
-  const updateSubscription = useDashboardStore((s) => s.updateSubscription)
-  const addTransaction = useDashboardStore((s) => s.addTransaction)
-  const paymentProcessedRef = useRef(false)
+  const fetchTreasury = useDashboardStore((s) => s.fetchTreasury)
+  const paymentToastedRef = useRef(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -27,29 +28,32 @@ function DashboardContent() {
     }
   }, [user, loading, router])
 
-  // Réception Stripe : payment_success=true → crédit + grand livre (une seule fois)
+  /**
+   * SÉCURITÉ : le plan est UNIQUEMENT mis à jour par le webhook Stripe côté serveur.
+   * Ici on affiche simplement un toast informatif et on recharge le solde depuis la DB.
+   * Le paramètre payment_pending=true n'octroie AUCUN token ni aucun plan.
+   */
   useEffect(() => {
-    if (searchParams.get('payment_success') !== 'true') return
-    if (paymentProcessedRef.current) return
-    paymentProcessedRef.current = true
+    if (searchParams.get('payment_pending') !== 'true') return
+    if (paymentToastedRef.current) return
+    paymentToastedRef.current = true
 
-    const planParam = searchParams.get('plan') || 'PRO'
-    const plan = ['STARTER', 'PRO', 'ENTERPRISE'].includes(planParam)
-      ? (planParam as 'STARTER' | 'PRO' | 'ENTERPRISE')
-      : 'PRO'
-    const amount = parseInt(searchParams.get('amount') || '0', 10)
-
-    updateSubscription(plan)
-    if (amount > 0) {
-      addTransaction(amount, 'CREDIT', `Abonnement ${plan} (Stripe Validé)`)
+    // Recharger le solde depuis la base — le webhook Stripe aura crédité les tokens
+    if (user?.id) {
+      setTimeout(() => fetchTreasury(user.id), 3000) // laisser le webhook traiter
+      setTimeout(() => fetchTreasury(user.id), 8000) // second essai
     }
 
-    router.replace('/dashboard', { scroll: false })
-    toast.success(t.dashboard.toast.paymentConfirmed, {
-      description: `${amount > 0 ? amount.toLocaleString() + ' ' : ''}${t.dashboard.toast.tokensAdded}`,
-      duration: 5000,
+    toast.success('Paiement reçu — activation en cours…', {
+      description: 'Votre plan sera activé dans quelques secondes.',
+      duration: 6000,
     })
-  }, [searchParams, router, updateSubscription, addTransaction, t])
+
+    router.replace('/dashboard', { scroll: false })
+  }, [searchParams, router, user, fetchTreasury])
+
+  const showWelcome = searchParams.get('welcome') === 'true'
+  const showOnboarding = searchParams.get('onboarding') === 'true'
 
   if (loading) {
     return (
@@ -62,11 +66,15 @@ function DashboardContent() {
     )
   }
 
-  if (!user) {
-    return null
-  }
+  if (!user) return null
 
-  return <DashboardQGV2 />
+  return (
+    <>
+      <DashboardQGV2 />
+      {showWelcome && <WelcomePlanModal onClose={() => router.replace('/dashboard', { scroll: false })} />}
+      {showOnboarding && <OnboardingWizard onComplete={() => router.replace('/dashboard', { scroll: false })} />}
+    </>
+  )
 }
 
 export default function DashboardPage() {

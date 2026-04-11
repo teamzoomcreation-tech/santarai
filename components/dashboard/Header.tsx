@@ -48,7 +48,7 @@ export default function DashboardHeader() {
             type="button"
             onClick={() => setLangMenuOpen((o) => !o)}
             onBlur={() => setTimeout(() => setLangMenuOpen(false), 150)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-colors text-xs"
+            className="flex items-center gap-1.5 px-2.5 py-2.5 min-h-[44px] rounded-lg border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-colors text-xs"
             aria-label="Sélectionner la langue"
             aria-haspopup="listbox"
             aria-expanded={langMenuOpen}
@@ -88,7 +88,7 @@ export default function DashboardHeader() {
             setSelectedAgent(null)
             setChatOpen(true)
           }}
-          className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+          className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
           aria-label={t.header.openChat}
         >
           <MessageSquare size={18} />
@@ -98,7 +98,7 @@ export default function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                className="relative p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                 aria-label={t.header.notifications}
               >
                 <Bell size={18} />
@@ -142,7 +142,7 @@ export default function DashboardHeader() {
         ) : (
           <button
             type="button"
-            className="relative p-2 text-slate-400 rounded-lg min-w-[40px] min-h-[40px] flex items-center justify-center"
+            className="relative p-2.5 text-slate-400 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label={t.header.notifications}
           >
             <Bell size={18} />

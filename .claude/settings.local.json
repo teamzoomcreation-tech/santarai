@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr create --title 'feat: audit complet SantarAI — sécurité, PWA, mobile, auto-exécution agents' --body ':*)",
+      "Bash(where gh:*)"
+    ]
+  }
+}
