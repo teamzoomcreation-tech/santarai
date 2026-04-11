@@ -15,6 +15,7 @@ import { TaskQueue } from "./task-queue"
 import { StatsCards } from "./stats-cards"
 import { NeuralInput } from "./NeuralInput"
 import { BoardroomModal } from "./BoardroomModal"
+import { ProductivityWidget } from "./ProductivityWidget"
 
 function Loading3DScene() {
   const { currentLang } = useLanguage()
@@ -150,6 +151,9 @@ export function DashboardQGV2() {
           agents={agents.map((a) => ({ id: a.id, name: a.name, role: a.role }))}
         />
       )}
+
+      {/* Widget Productivité & ROI */}
+      <ProductivityWidget />
 
       {/* Zone sous la scène : Grille horizontale 60% | 40% */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">

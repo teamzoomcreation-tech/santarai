@@ -47,9 +47,10 @@ export default function SignupPage() {
       if (error) throw error
 
       toast.success("Compte créé avec succès !", {
-        description: "Vérifiez votre email pour confirmer votre compte",
+        description: "Bienvenue sur SANTARAI ! Connectez-vous pour découvrir votre espace.",
       })
-      router.push("/login")
+      // Rediriger vers login avec param welcome pour afficher la modale d'onboarding au premier login
+      router.push("/login?welcome=true")
     } catch (error: any) {
       toast.error("Erreur lors de l'inscription", {
         description: error.message,

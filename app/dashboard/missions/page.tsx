@@ -477,7 +477,7 @@ export default function MissionsPage() {
                           setViewingReport(mission)
                           void markMissionAsRead(mission.id)
                         }}
-                        className="p-2 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/30 transition-colors"
+                        className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 border border-transparent hover:border-indigo-500/30 transition-colors"
                         title={t.dashboard.missions.viewReport}
                       >
                         <Eye size={18} />
@@ -530,7 +530,7 @@ export default function MissionsPage() {
             </AnimatePresence>
             {/* En-tête rapport — Rapport de Livrable */}
             <div className="flex items-center justify-between px-6 py-4 border-b-2 border-gray-300 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shrink-0">
-              <span className="text-[10px] font-black tracking-[0.25em] text-gray-700 dark:text-slate-300 uppercase">
+              <span className="text-xs font-black tracking-[0.25em] text-gray-700 dark:text-slate-300 uppercase">
                 {t.dashboard.missions.reportTitle} — {(viewingReport.agentName ?? t.dashboard.missions.agent ?? 'Salarié').toUpperCase()}
               </span>
               <button
@@ -545,7 +545,7 @@ export default function MissionsPage() {
             <div className="flex-1 overflow-y-auto p-6 space-y-5 min-h-0">
               {/* SYNTHÈSE EXÉCUTIVE */}
               <section>
-                <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.synthesisExecutive}</h4>
+                <h4 className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.synthesisExecutive}</h4>
                 <div className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-950 p-4 shadow-inner text-gray-800 dark:text-slate-200 text-sm leading-relaxed min-h-[120px] max-h-[40vh] overflow-y-auto">
                   <div className="prose prose-sm max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-800 dark:prose-p:text-slate-200 prose-pre:bg-gray-100 dark:prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-300 dark:prose-pre:border-gray-600 prose-pre:rounded-lg prose-pre:p-4 prose-code:bg-gray-200 dark:prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-cyan-700 dark:prose-code:text-cyan-300">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -556,7 +556,7 @@ export default function MissionsPage() {
               </section>
               {/* ANALYSE DE PERFORMANCE */}
               <section>
-                <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.performanceAnalysis}</h4>
+                <h4 className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.performanceAnalysis}</h4>
                 <p className="text-sm text-gray-700 dark:text-slate-300">
                   Coût en Tokens : <span className="font-mono font-semibold">{viewingReport.cost} TK</span>
                   <span className="ml-2 text-xs text-gray-500 dark:text-slate-500">
@@ -566,14 +566,14 @@ export default function MissionsPage() {
               </section>
               {/* Objet (référence) */}
               <section>
-                <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.objectLabel}</h4>
+                <h4 className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-1.5">{t.dashboard.missions.objectLabel}</h4>
                 <p className="text-sm font-semibold text-gray-900 dark:text-white border-l-4 border-cyan-600 dark:border-cyan-500 pl-3 py-1">
                   {viewingReport.title}
                 </p>
               </section>
               {/* Lien de Synchronisation / Publication — Connecteur */}
               <section className="rounded-lg border border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 p-4">
-                <h4 className="text-[10px] font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-2">
+                <h4 className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-slate-500 mb-2">
                   {t.dashboard.missions.syncLinkLabel}
                 </h4>
                 <p className="text-xs text-gray-600 dark:text-slate-400 mb-3">
@@ -611,7 +611,7 @@ export default function MissionsPage() {
                 <button
                   type="button"
                   onClick={() => { setViewingReport(null); setLivrableApproved(false) }}
-                  className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold uppercase tracking-wider text-xs rounded-lg shadow-lg transition-colors"
+                  className="px-5 py-3 min-h-[44px] bg-cyan-600 hover:bg-cyan-500 text-white font-bold uppercase tracking-wider text-xs rounded-lg shadow-lg transition-colors"
                 >
                   {t.dashboard.missions.archiveToRegister}
                 </button>
@@ -622,14 +622,14 @@ export default function MissionsPage() {
                     confetti({ particleCount: 60, spread: 55, origin: { x: 0.5, y: 0.6 }, colors: ['#10B981', '#34D399', '#FBBF24'] })
                     setTimeout(() => setLivrableApproved(false), 2000)
                   }}
-                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-wider text-xs rounded-lg shadow-lg transition-colors"
+                  className="px-5 py-3 min-h-[44px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-wider text-xs rounded-lg shadow-lg transition-colors"
                 >
                   {t.dashboard.missions.approveDeliverable}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDelete(viewingReport.id)}
-                  className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-2 px-3 py-3 min-h-[44px] text-red-500 hover:bg-red-500/10 rounded-lg text-sm transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   {t.dashboard.missions.archive}
@@ -664,7 +664,7 @@ export default function MissionsPage() {
                 <button
                   type="button"
                   onClick={() => handleCopy(viewingReport.resultSnippet ?? '')}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-sm transition-colors shadow-lg"
+                  className="flex items-center gap-2 px-4 py-3 min-h-[44px] bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-sm transition-colors shadow-lg"
                 >
                   {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {t.dashboard.missions.copyText}
