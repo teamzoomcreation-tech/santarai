@@ -13,9 +13,10 @@ const PLAN_CONFIG: Array<{ tier: SubscriptionTier; name: string; icon: typeof Za
   { tier: 'ENTERPRISE', name: 'Enterprise', icon: Rocket, color: 'from-orange-500 to-red-500', popular: false },
 ]
 
-const PRICES: Record<SubscriptionTier, number> = { STARTER: 14.9, PRO: 49, ENTERPRISE: 129 }
+const PRICES: Record<SubscriptionTier, number> = { FREE: 0, STARTER: 14.9, PRO: 49, ENTERPRISE: 129 }
 
 const LIMITS = {
+  FREE: { agents: 0, tokens: 25_000, projects: 1 },
   STARTER: { agents: 5, tokens: 500_000, projects: 50 },
   PRO: { agents: 20, tokens: 2_500_000, projects: 200 },
   ENTERPRISE: { agents: 999, tokens: 15_000_000, projects: 999 },
